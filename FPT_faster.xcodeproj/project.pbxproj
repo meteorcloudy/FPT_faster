@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		54F2F1981A6B669100357CA3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F2F1971A6B669100357CA3 /* main.cpp */; };
+		54F2F1A61A6B670800357CA3 /* PhylogenyTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F2F1A31A6B670800357CA3 /* PhylogenyTree.cpp */; };
+		54F2F1A71A6B670800357CA3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F2F1A41A6B670800357CA3 /* Utils.cpp */; };
+		54F2F1A81A6B670800357CA3 /* FPTSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F2F1A51A6B670800357CA3 /* FPTSolver.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +28,12 @@
 /* Begin PBXFileReference section */
 		54F2F1941A6B669100357CA3 /* FPT_faster */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FPT_faster; sourceTree = BUILT_PRODUCTS_DIR; };
 		54F2F1971A6B669100357CA3 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		54F2F1A01A6B66F700357CA3 /* FPTSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPTSolver.h; sourceTree = "<group>"; };
+		54F2F1A11A6B66F700357CA3 /* PhylogenyTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhylogenyTree.h; sourceTree = "<group>"; };
+		54F2F1A21A6B66F700357CA3 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		54F2F1A31A6B670800357CA3 /* PhylogenyTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhylogenyTree.cpp; sourceTree = "<group>"; };
+		54F2F1A41A6B670800357CA3 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		54F2F1A51A6B670800357CA3 /* FPTSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FPTSolver.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,9 +66,31 @@
 		54F2F1961A6B669100357CA3 /* FPT_faster */ = {
 			isa = PBXGroup;
 			children = (
+				54F2F19F1A6B66C800357CA3 /* source */,
+				54F2F19E1A6B66B900357CA3 /* header */,
 				54F2F1971A6B669100357CA3 /* main.cpp */,
 			);
 			path = FPT_faster;
+			sourceTree = "<group>";
+		};
+		54F2F19E1A6B66B900357CA3 /* header */ = {
+			isa = PBXGroup;
+			children = (
+				54F2F1A31A6B670800357CA3 /* PhylogenyTree.cpp */,
+				54F2F1A41A6B670800357CA3 /* Utils.cpp */,
+				54F2F1A51A6B670800357CA3 /* FPTSolver.cpp */,
+			);
+			name = header;
+			sourceTree = "<group>";
+		};
+		54F2F19F1A6B66C800357CA3 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				54F2F1A01A6B66F700357CA3 /* FPTSolver.h */,
+				54F2F1A11A6B66F700357CA3 /* PhylogenyTree.h */,
+				54F2F1A21A6B66F700357CA3 /* Utils.h */,
+			);
+			name = source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,6 +150,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				54F2F1981A6B669100357CA3 /* main.cpp in Sources */,
+				54F2F1A71A6B670800357CA3 /* Utils.cpp in Sources */,
+				54F2F1A61A6B670800357CA3 /* PhylogenyTree.cpp in Sources */,
+				54F2F1A81A6B670800357CA3 /* FPTSolver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

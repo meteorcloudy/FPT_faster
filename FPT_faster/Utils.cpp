@@ -9,6 +9,7 @@
 #include "Utils.h"
 using namespace std;
 
+
 void FPT_ASSERT(bool f) {
     if(f == false) {
         cout << "Assertion error" << endl;

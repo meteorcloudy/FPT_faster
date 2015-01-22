@@ -22,17 +22,17 @@ private:
     TreeNode * parent;
     vector<TreeNode *> children;
     int id;
-    string label;
+    int label;
     
 public:
     TreeNode();
     TreeNode(int id);
-    TreeNode(int id,string label);
+    TreeNode(int id,int label);
     ~TreeNode();
     
     void AddChild(TreeNode *pChild);
     void SetId(int x) {id = x;}
-    void SetLabel(const string str) {label = str;}
+    void SetLabel(const int str) {label = str;}
     bool IsLeaf() const { return children.size() == 0;}
     bool IsRoot() const { return parent == NULL;}
     bool IsSibling(const TreeNode * p) const ;
@@ -41,21 +41,24 @@ public:
     TreeNode * GetChild(int i) { return children[i];}
     TreeNode * GetParent() { return parent;}
     int GetId() { return id;}
-    string GetLablel() { return label;}
+    int GetLablel() { return label;}
     string ToString();
     
     TreeNode * Clone(); // 克隆以当前的为根的子树
 };
 
 
+extern unordered_map<string, int> labelToNum;
+extern unordered_map<int, string> numToLabel;
+extern int totNum;
 
 //PhylogenyTree
 class PhylogenyTree{
     
 private:
-    TreeNode * rootNode;
+    vector<TreeNode *> roots;
     unordered_map<int,TreeNode *> idMap;
-    unordered_map<string,TreeNode *> labelMap;
+    unordered_map<int,TreeNode *> labelMap;
     int nodeNum;  // 仅建树时使用，不代表节点总数
     
     TreeNode * BuildSubtreeByNewick(const string & newickStr);
@@ -65,14 +68,13 @@ private:
     
 public:
     PhylogenyTree();
-    PhylogenyTree(TreeNode * p);
+    PhylogenyTree(vector<TreeNode *> p);
     ~PhylogenyTree();
     
     void BuildByNewick(const string & newickStr);
-    void SetRootNode(TreeNode * p) { rootNode = p;};
-    TreeNode * GetRootNode() { return rootNode;}
+    TreeNode * GetRootNode(int k) { return roots[k];}
     TreeNode * GetNodeById(int id) { return idMap[id]; }
-    TreeNode * GetNodeByLabel(string label) {return labelMap[label];}
+    TreeNode * GetNodeByLabel(int label) {return labelMap[label];}
     int GetNodeNum() { return (int) labelMap.size();}
     void Contract();
     vector<PhylogenyTree *> DeleteEdge(TreeNode * p); // delete the edge connecting node p and the parent of p , then return a forest
@@ -83,7 +85,6 @@ public:
     PhylogenyTree * Clone();
 };
 
-typedef vector<PhylogenyTree *> Forest;
 
 #endif
 

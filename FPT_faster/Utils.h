@@ -25,6 +25,10 @@
 
 using namespace std;
 
+unordered_map<string, int> labelToNum;
+unordered_map<int, string> numToLabel;
+int totNum = 0;
+
 void FPT_ASSERT(bool f);
 void FPT_ASSERT_INFO( bool f, const char *info);
 bool CheckLabelFormat(const string &label);

@@ -41,14 +41,6 @@ int main(int argc, const char * argv[]) {
     PhylogenyTree * t2 = new PhylogenyTree();
     t2->BuildByNewick(newick2);
     
-    FPTSolver solver;
-    int dist = solver.MAF_Calc(t1, t2);
-    cout << "rSPR distance : " << dist <<endl;
-    
-    Forest forest = solver.GetResult();
-    cout << "MAF:" <<endl;
-    for (int i=0;i<forest.size();i++)
-        cout << forest[i]->ToString() <<endl;
     
     return 0;
 }

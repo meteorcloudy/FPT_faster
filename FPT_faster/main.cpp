@@ -9,6 +9,7 @@
 #include <iostream>
 #include "PhylogenyTree.h"
 #include "FPTSolver.h"
+#include "LCA.h"
 using namespace std;
 
 
@@ -24,7 +25,7 @@ int main(int argc, const char * argv[]) {
     cout << "\t" << newick1 <<endl;
     cout << "\t" << newick2 <<endl;
     
-    cin >> newick1 >> newick2;
+//    cin >> newick1 >> newick2;
     if (newick1[newick1.length()-1]==';')
         newick1 = newick1.substr(0,newick1.length()-1);
     if (newick2[newick2.length()-1]==';')

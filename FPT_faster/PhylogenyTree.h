@@ -17,22 +17,27 @@ using namespace std;
 class TreeNode{
     
     friend class PhylogenyTree;
+    friend class LCA;
 
 private:
     TreeNode * parent;
     vector<TreeNode *> children;
     int id;
     int label;
+    int reflectId;
     
 public:
     TreeNode();
     TreeNode(int id);
     TreeNode(int id,int label);
+    TreeNode(int id,int label,int reflectId);
+    TreeNode(TreeNode *p);
     ~TreeNode();
     
     void AddChild(TreeNode *pChild);
     void SetId(int x) {id = x;}
     void SetLabel(const int str) {label = str;}
+    void SetReflectId(const int id) { reflectId = id;}
     bool IsLeaf() const { return children.size() == 0;}
     bool IsRoot() const { return parent == NULL;}
     bool IsSibling(const TreeNode * p) const ;
@@ -47,10 +52,6 @@ public:
     TreeNode * Clone(); // 克隆以当前的为根的子树
 };
 
-
-extern unordered_map<string, int> labelToNum;
-extern unordered_map<int, string> numToLabel;
-extern int totNum;
 
 //PhylogenyTree
 class PhylogenyTree{
@@ -68,21 +69,21 @@ private:
     
 public:
     PhylogenyTree();
-    PhylogenyTree(vector<TreeNode *> p);
+    PhylogenyTree(PhylogenyTree * tree);
     ~PhylogenyTree();
     
     void BuildByNewick(const string & newickStr);
     TreeNode * GetRootNode(int k) { return roots[k];}
     TreeNode * GetNodeById(int id) { return idMap[id]; }
     TreeNode * GetNodeByLabel(int label) {return labelMap[label];}
-    int GetNodeNum() { return (int) labelMap.size();}
+    int GetLabeledNodeNum() { return (int) labelMap.size();}
+    int GetNodeNum() { return (int) idMap.size();}
+    void AddRoot(TreeNode * p);
     void Contract();
-    vector<PhylogenyTree *> DeleteEdge(TreeNode * p); // delete the edge connecting node p and the parent of p , then return a forest
-    vector<PhylogenyTree *> DeleteEdges(vector<TreeNode *> nodes); // delete serveral edges , then return a forest
+    void DeleteEdge(int nid); // delete the edge connecting node p and the parent of p , then return a forest
+    void DeleteEdges(vector<int> &nids); // delete serveral edges , then return a forest
     vector<TreeNode *> GetAllLabeledNode();
     string ToString();
-    
-    PhylogenyTree * Clone();
 };
 
 

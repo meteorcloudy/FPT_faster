@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		54DC4B741A72308300F2F35C /* FPTSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54DC4B731A72308300F2F35C /* FPTSolver.cpp */; };
 		54F2F1981A6B669100357CA3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F2F1971A6B669100357CA3 /* main.cpp */; };
 		54F2F1A61A6B670800357CA3 /* PhylogenyTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F2F1A31A6B670800357CA3 /* PhylogenyTree.cpp */; };
 		54F2F1A71A6B670800357CA3 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54F2F1A41A6B670800357CA3 /* Utils.cpp */; };
@@ -26,6 +27,8 @@
 
 /* Begin PBXFileReference section */
 		540CCE081A6FE49D0060EE5A /* FPTSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPTSolver.h; sourceTree = "<group>"; };
+		54DC4B721A72259200F2F35C /* LCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LCA.h; sourceTree = "<group>"; };
+		54DC4B731A72308300F2F35C /* FPTSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FPTSolver.cpp; sourceTree = "<group>"; };
 		54F2F1941A6B669100357CA3 /* FPT_faster */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FPT_faster; sourceTree = BUILT_PRODUCTS_DIR; };
 		54F2F1971A6B669100357CA3 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		54F2F1A11A6B66F700357CA3 /* PhylogenyTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhylogenyTree.h; sourceTree = "<group>"; };
@@ -76,6 +79,7 @@
 			children = (
 				54F2F1A31A6B670800357CA3 /* PhylogenyTree.cpp */,
 				54F2F1A41A6B670800357CA3 /* Utils.cpp */,
+				54DC4B731A72308300F2F35C /* FPTSolver.cpp */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -86,6 +90,7 @@
 				54F2F1A11A6B66F700357CA3 /* PhylogenyTree.h */,
 				540CCE081A6FE49D0060EE5A /* FPTSolver.h */,
 				54F2F1A21A6B66F700357CA3 /* Utils.h */,
+				54DC4B721A72259200F2F35C /* LCA.h */,
 			);
 			name = header;
 			sourceTree = "<group>";
@@ -149,6 +154,7 @@
 				54F2F1981A6B669100357CA3 /* main.cpp in Sources */,
 				54F2F1A71A6B670800357CA3 /* Utils.cpp in Sources */,
 				54F2F1A61A6B670800357CA3 /* PhylogenyTree.cpp in Sources */,
+				54DC4B741A72308300F2F35C /* FPTSolver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

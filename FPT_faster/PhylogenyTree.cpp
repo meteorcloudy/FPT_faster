@@ -12,15 +12,29 @@
 
 using namespace std;
 
+
+unordered_map<string, int> labelToNum; // 用于简化label为数字，输入输出时进行转换
+unordered_map<int, string> numToLabel;
+int totNum = 0; // 总的label节点个数
+
 // implement TreeNode
 
-TreeNode :: TreeNode() : id(-1), parent(NULL), label(-1) {
+TreeNode :: TreeNode() : id(-1), parent(NULL), label(-1), reflectId(-1) {
 }
 
-TreeNode :: TreeNode(int x) : id(x), parent(NULL), label(-1) {
+TreeNode :: TreeNode(int x) : id(x), parent(NULL), label(-1), reflectId(-1) {
 }
 
-TreeNode :: TreeNode(int x,int l) : id(x), parent(NULL), label(l) {
+TreeNode :: TreeNode(int x,int l) : id(x), parent(NULL), label(l), reflectId(-1) {
+}
+
+TreeNode :: TreeNode(int x,int l,int ref) : id(x), parent(NULL), label(l), reflectId(ref) {
+}
+
+TreeNode :: TreeNode(TreeNode * p){
+    TreeNode(p->id,p->label,p->reflectId);
+    for (int i=0;i<p->children.size();i++)
+        this->AddChild(new TreeNode(p->children[i]));
 }
 
 TreeNode :: ~TreeNode(){
@@ -37,8 +51,7 @@ void TreeNode :: AddChild(TreeNode *pChild){
 }
 
 bool TreeNode :: IsSibling(const TreeNode *p) const {  // if and only if their parents are the same, their subtrees don't have to be the same
-    if (p==NULL) return false;
-    if (p->parent==NULL) return false;
+    if (p==NULL || p->parent==NULL) return false;
     return this->parent == p->parent;
 }
 
@@ -63,17 +76,7 @@ string TreeNode :: ToString() {
     return "";
 }
 
-TreeNode * TreeNode :: Clone(){
-    TreeNode * node = new TreeNode(this->id,this->label);
-    node->children = this->children;
-    return node;
-}
-
 // implement PhylogenyTree
-
-extern unordered_map<string, int> labelToNum;
-extern unordered_map<int, string> numToLabel;
-extern int totNum;
 
 bool NodeComparer (TreeNode * a,TreeNode * b) {
     return a->GetLablel() < b->GetLablel();
@@ -82,8 +85,9 @@ bool NodeComparer (TreeNode * a,TreeNode * b) {
 PhylogenyTree :: PhylogenyTree() {
 }
 
-PhylogenyTree :: PhylogenyTree(vector<TreeNode *> p) {
-    roots = p;
+PhylogenyTree :: PhylogenyTree(PhylogenyTree * tree) {
+    for (int i=0;i<tree->roots.size();i++)
+        roots.push_back(new TreeNode(tree->roots[i]));
     BuildMaps();
 }
 
@@ -101,7 +105,6 @@ void PhylogenyTree :: BuildByNewick(const string &newickStr) {
     roots.clear();
     nodeNum = 0;
     roots.push_back(BuildSubtreeByNewick(newickStr));
-    BuildMaps();
 }
 
 TreeNode * PhylogenyTree :: BuildSubtreeByNewick(const string &newickStr) {
@@ -120,18 +123,25 @@ TreeNode * PhylogenyTree :: BuildSubtreeByNewick(const string &newickStr) {
         FPT_ASSERT_INFO(cnt==0, "Wrong Newick format !" );
         FPT_ASSERT_INFO(CheckLabelFormat(newickStr), ("Wrong label format: "+newickStr).c_str());
         unordered_map<string,int> :: iterator it = labelToNum.find(newickStr);
-        if (it==labelToNum.end()) {
-            labelToNum[newickStr] = totNum++;
-            numToLabel[totNum] = newickStr;
-            return new TreeNode(nodeNum++,totNum-1);
-        } else {
-            return new TreeNode(nodeNum++,it->second);
-        }
 
+        if (it==labelToNum.end()) {
+            numToLabel[totNum] = newickStr;
+            labelToNum[newickStr] = totNum;
+            TreeNode * t = new TreeNode(nodeNum,totNum);
+            labelMap[totNum++] = t;
+            idMap[nodeNum++] = t;
+            return t;
+        } else {
+            TreeNode * t = new TreeNode(nodeNum,it->second);
+            labelMap[it->second] = t;
+            idMap[nodeNum++] = t;
+            return t;
+        }
     } else {
         FPT_ASSERT_INFO(newickStr[0] == '(', "Wrong Newick format !" );
         FPT_ASSERT_INFO(newickStr[len-1] == ')', "Wrong Newick format !" );
-        TreeNode * p = new TreeNode(nodeNum++);
+        TreeNode * p = new TreeNode(nodeNum);
+        idMap[nodeNum++] = p;
         TreeNode * child1 = BuildSubtreeByNewick(newickStr.substr(1,pos-1));
         TreeNode * child2 = BuildSubtreeByNewick(newickStr.substr(pos+1,len-pos-2));
         child1->parent = child2->parent = p;
@@ -148,7 +158,7 @@ string PhylogenyTree :: ToString() {
     else if (roots.size()>1) {
         result = "forest{\n";
         for (int i=0;i<roots.size();i++)
-            result = SubTreeToString(roots[i]) + "\n";
+            result = "\t" + SubTreeToString(roots[i]) + "\n";
         result = "}";
     }
     return result;
@@ -165,9 +175,23 @@ string PhylogenyTree :: SubTreeToString(TreeNode * p) {
     return "";
 }
 
+void PhylogenyTree :: AddRoot(TreeNode * p){
+    roots.push_back(new TreeNode(p));
+}
+
 void PhylogenyTree :: Contract() {
     for (int i=(int)roots.size()-1;i>=0;i--)
         roots[i] = SubTreeContract(roots[i]);
+    
+    int cnt = 0;
+    int i = 0;
+    while (i<roots.size()){
+        if (roots[i] != NULL)
+            roots[cnt++] = roots[i];
+        i++;
+    }
+    
+    roots.resize(cnt);
 }
 
 TreeNode * PhylogenyTree :: SubTreeContract(TreeNode *p) {
@@ -179,7 +203,6 @@ TreeNode * PhylogenyTree :: SubTreeContract(TreeNode *p) {
             p->children.clear();
             tmp->parent = p->parent;
             idMap.erase(p->id);
-            if (p->label != -1) labelMap.erase(p->label);
             delete p;
             p = tmp;
         }
@@ -197,78 +220,81 @@ TreeNode * PhylogenyTree :: SubTreeContract(TreeNode *p) {
     if (p->IsLeaf() && p->GetLablel() == -1) {
         delete p;
         idMap.erase(p->id);
-        if (p->label != -1) labelMap.erase(p->label);
         p = NULL;
     }
     
     return p;
 }
 
-PhylogenyTree * PhylogenyTree :: DeleteEdge(TreeNode *p) {
+void PhylogenyTree :: DeleteEdge(int nid) {
     
+    TreeNode * p = idMap[nid];
+    
+    FPT_ASSERT_INFO(p != NULL,("There is no node whose id = "+itoa(nid)).c_str());
     FPT_ASSERT_INFO(p->parent != NULL,"There is no edge above p");
     
-    Forest forest;
-    p->parent->removeChild(p);
+    TreeNode * parent = p->parent;
+    parent->removeChild(p);
     p->parent = NULL;
-    forest.push_back(new PhylogenyTree(p));
+    roots.push_back(p);
+    
+    
+    TreeNode * child = parent->children[0];
+    
+    idMap.erase(parent->id);
+    parent->id = child->id;
+    parent->label = child->label;
+    parent->reflectId = child->reflectId;
+    parent->children = child->children;
+    idMap[parent->id] = parent;
+    if (parent->label!=-1) labelMap[parent->label] = parent;
+    child->children.clear();
+    delete child;
+    for (int i=0;i<parent->children.size();i++){
+        parent->children[i]->parent = parent;
+    }
+    
+    //    this->Contract();
+}
+
+void PhylogenyTree :: DeleteEdges(vector<int> &nids) {  //  TODO 用DeleteEdge优化
+    
+    for (int i=(int)nids.size()-1;i>=0;i--) {
+        TreeNode * p = idMap[nids[i]];
+        
+        FPT_ASSERT_INFO(p != NULL,("_ There is no node whose id = "+itoa(nids[i])).c_str());
+        FPT_ASSERT_INFO(p->parent != NULL,"_ There is no edge above p");
+        
+        p->parent->removeChild(p);
+        p->parent = NULL;
+        roots.push_back(p);
+    }
     
     this->Contract();
-    forest.push_back(this);
-    return forest;
 }
 
-Forest PhylogenyTree :: DeleteEdges(vector<TreeNode *> nodes) {
-    
-    Forest forest;
-    
-    for (int i=(int)nodes.size()-1;i>=0;i--) {
-        FPT_ASSERT_INFO(nodes[i]->parent != NULL,("There is no edge above p" + itoa(i)).c_str());
-        nodes[i]->parent->removeChild(nodes[i]);
-        nodes[i]->parent = NULL;
-        forest.push_back(new PhylogenyTree(nodes[i]));
-    }
-    
-    forest.push_back(this);
-    
-    for (int i=(int)forest.size()-1;i>=0;i--)
-        forest[i]->Contract();
-    
-    int cnt = 0;
-    int i = 0;
-    while (i<forest.size()){
-        if (forest[i]->rootNode != NULL)
-            forest[cnt++] = forest[i];
-        i++;
-    }
-    
-    forest.resize(cnt);
-    return forest;
-}
-
-void PhylogenyTree :: BuildMaps(){
+void PhylogenyTree :: BuildMaps(){  // TODO , 优化，只bfs到siblingId!=-1的点
     idMap.clear();
     labelMap.clear();
-    if (rootNode==NULL) return;
     queue<TreeNode *> q;
-    q.push(rootNode);
+    
+    for (int i=(int)roots.size()-1;i>=0;i--)
+        q.push(roots[i]);
+    
     TreeNode * p;
     while (!q.empty()){
         p = q.front(); q.pop();
         idMap[p->id] = p;
-        if (p->label != "-") labelMap[p->label]=p;
+        if (p->label != -1) labelMap[p->label]=p;
         for (int i=(int) p->children.size()-1;i>=0;i--)    	
             q.push(p->children[i]);
     }
 }
 
-PhylogenyTree * PhylogenyTree :: Clone() {
-    return new PhylogenyTree(rootNode->Clone());
-}
 
 vector<TreeNode *> PhylogenyTree :: GetAllLabeledNode(){
     vector<TreeNode *> res;
-    unordered_map<string,TreeNode *> :: iterator i;
+    unordered_map<int,TreeNode *> :: iterator i;
     for (i=labelMap.begin();i!=labelMap.end();i++)
         res.push_back(i->second);
     sort(res.begin(),res.end(),NodeComparer);

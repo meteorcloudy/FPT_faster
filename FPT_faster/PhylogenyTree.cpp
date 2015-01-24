@@ -44,6 +44,13 @@ TreeNode :: ~TreeNode(){
     children.clear();
 }
 
+TreeNode * TreeNode:: GetSiblingNode(){
+    TreeNode * p = this->parent;
+    if (p==NULL) return NULL;
+    if (p->children[0]==this) return p->children[1];
+    return p->children[0];
+}
+
 void TreeNode :: AddChild(TreeNode *pChild){
     FPT_ASSERT_INFO( pChild!=NULL, "can't add a null child");
     children.push_back(pChild);
@@ -176,7 +183,8 @@ string PhylogenyTree :: SubTreeToString(TreeNode * p) {
 }
 
 void PhylogenyTree :: AddRoot(TreeNode * p){
-    roots.push_back(new TreeNode(p));
+//    roots.push_back(new TreeNode(p));
+    roots.push_back(p);
 }
 
 void PhylogenyTree :: Contract() {
@@ -286,6 +294,7 @@ void PhylogenyTree :: BuildMaps(){  // TODO , 优化，只bfs到siblingId!=-1的
         p = q.front(); q.pop();
         idMap[p->id] = p;
         if (p->label != -1) labelMap[p->label]=p;
+        if (p->reflectId != -1) continue;   // 只bfs到siblingId!=-1的点
         for (int i=(int) p->children.size()-1;i>=0;i--)    	
             q.push(p->children[i]);
     }
@@ -298,6 +307,15 @@ vector<TreeNode *> PhylogenyTree :: GetAllLabeledNode(){
     for (i=labelMap.begin();i!=labelMap.end();i++)
         res.push_back(i->second);
     sort(res.begin(),res.end(),NodeComparer);
+    return res;
+}
+
+vector<TreeNode *> PhylogenyTree :: GetReflectedNode(){
+    vector<TreeNode *> res;
+    unordered_map<int,TreeNode *> :: iterator i;
+    for (i=idMap.begin();i!=idMap.end();i++)
+        if (i->second->reflectId != -1)
+            res.push_back(i->second);
     return res;
 }
 

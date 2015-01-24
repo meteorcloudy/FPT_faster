@@ -13,12 +13,35 @@
 #include "LCA.h"
 using namespace std;
 
+struct Group{
+    TreeNode * a, * b, * c, *d;
+    int type;
+    Group(){ a=b=c=d=NULL; type=-1; }
+};
+
 class FPTSolver{
     
 private:
     LCA lca;
     PhylogenyTree * ans;
     void FindPendantNodes(TreeNode * p, TreeNode * r,vector<int> &nids);
+    void MergeSiblingNodes(PhylogenyTree * T1, PhylogenyTree * F2);
+    void MoveTree(PhylogenyTree * F, PhylogenyTree * T1, PhylogenyTree * F2);
+    Group FindGroup(PhylogenyTree * tree);
+    void clearParam(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2);
+    void buildParam(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2,PhylogenyTree * & _F,PhylogenyTree * & _T1,PhylogenyTree * & _F2);
+    TreeNode * IsOneDistance(TreeNode * p1, TreeNode * p2);
+    bool Case_1_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,Group & grp2);
+    bool Case_1_2_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,int nid);
+    bool Case_1_2_2_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,Group & grp2,vector<int> & pedant);
+    bool Case_1_2_2_2(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, Group &grp2, vector<int> & pedant);
+    bool Case_1_2_2_2_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,int nid);
+    bool Case_1_2_2_2_2(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,Group & grp2,vector<int> & pedant);
+    bool Case_1_2_2_2_3(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,Group & grp2,vector<int> & pedant_ab,vector<int> & pedant_ac);
+    bool Case_2_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, int nid1, int nid2);
+    bool Case_2_2(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, vector<int> & pedant_one);
+    bool Case_2_3(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, Group &grp2, TreeNode * Rab);
+    bool Case_2_4(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, Group &grp2);
     bool MAF(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k);
     
 public:

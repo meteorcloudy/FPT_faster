@@ -65,7 +65,7 @@ public:
         }
         return dp[u][0];
     }
-    
+
 };
 
 #endif

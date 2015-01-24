@@ -39,14 +39,26 @@ public:
     void SetLabel(const int str) {label = str;}
     void SetReflectId(const int id) { reflectId = id;}
     bool IsLeaf() const { return children.size() == 0;}
+    bool IsRtLeaf() const { return reflectId != -1;}
+    bool Is2ndRtLeaf() const {
+        if (children.size()!=2) return false;
+        return children[0]->IsRtLeaf() && children[1]->IsRtLeaf();
+    }
     bool IsRoot() const { return parent == NULL;}
     bool IsSibling(const TreeNode * p) const ;
     void removeChild(TreeNode * p);
     int GetChildrenSize() { return (int)children.size();}
     TreeNode * GetChild(int i) { return children[i];}
     TreeNode * GetParent() { return parent;}
+    TreeNode * GetSiblingNode();
+    TreeNode * GetRoot(){
+        TreeNode * p = this;
+        while (p->parent) p = p->parent;
+        return p;
+    }
     int GetId() { return id;}
     int GetLablel() { return label;}
+    int GetReflectId() { return reflectId;}
     string ToString();
     
     TreeNode * Clone(); // 克隆以当前的为根的子树
@@ -78,11 +90,25 @@ public:
     TreeNode * GetNodeByLabel(int label) {return labelMap[label];}
     int GetLabeledNodeNum() { return (int) labelMap.size();}
     int GetNodeNum() { return (int) idMap.size();}
+    int GetRootNum() { return (int) roots.size();}
     void AddRoot(TreeNode * p);
     void Contract();
     void DeleteEdge(int nid); // delete the edge connecting node p and the parent of p , then return a forest
     void DeleteEdges(vector<int> &nids); // delete serveral edges , then return a forest
+    void EraseNode(TreeNode * p){
+        idMap.erase(p->id);
+        if (p->label != -1) labelMap.erase(p->label);
+    }
+    void RemoveRoot(TreeNode * p){
+        for (int i=0;i<roots.size();i++)
+            if (roots[i] == p){
+                roots.erase(roots.begin()+i);
+                break;
+        }
+        EraseNode(p);
+    }
     vector<TreeNode *> GetAllLabeledNode();
+    vector<TreeNode *> GetReflectedNode();
     string ToString();
 };
 

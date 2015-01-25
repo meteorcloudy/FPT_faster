@@ -27,12 +27,15 @@ void FPT_ASSERT_INFO( bool f, const char *info) {
 bool CheckLabelFormat(const string &label) {
     if (label == "") return false;
     for (int i=0;i<label.length();i++) {
-        if (!((label[i] >= 'a' && label[i] <= 'z' )
-            ||(label[i] >= 'A' && label[i] <= 'Z' )
-            ||(label[i] >= '0' && label[i] <= '9')
-            || label[i] == '_'
-            || label[i] == '.' ))
-        return false;
+//        if (!((label[i] >= 'a' && label[i] <= 'z' )
+//            ||(label[i] >= 'A' && label[i] <= 'Z' )
+//            ||(label[i] >= '0' && label[i] <= '9')
+//            || label[i] == '_'
+//            || label[i] == '.'
+//            || label[i] == ' '
+//            || label[i] == '"' ))
+//        return false;
+        if (label[i]=='(' || label[i]==')' ) return false;
     }
     return true;
 }

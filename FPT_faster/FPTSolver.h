@@ -25,12 +25,14 @@ private:
     LCA lca;
     PhylogenyTree * ans;
     void FindPendantNodes(TreeNode * p, TreeNode * r,vector<int> &nids);
-    void MergeSiblingNodes(PhylogenyTree * T1, PhylogenyTree * F2);
-    void MoveTree(PhylogenyTree * F, PhylogenyTree * T1, PhylogenyTree * F2);
+    bool MergePair(PhylogenyTree *T1, PhylogenyTree *F2,TreeNode * n1, TreeNode * n2);
+    bool MergeSiblingNodes(PhylogenyTree * T1, PhylogenyTree * F2);
+    bool MoveTree(PhylogenyTree * F, PhylogenyTree * T1, PhylogenyTree * F2);
     Group FindGroup(PhylogenyTree * tree);
     void clearParam(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2);
     void buildParam(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2,PhylogenyTree * & _F,PhylogenyTree * & _T1,PhylogenyTree * & _F2);
     TreeNode * IsOneDistance(TreeNode * p1, TreeNode * p2);
+    bool Case_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, Group &grp2);
     bool Case_1_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,Group & grp2);
     bool Case_1_2_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,int nid);
     bool Case_1_2_2_1(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k,Group & grp2,vector<int> & pedant);
@@ -42,6 +44,7 @@ private:
     bool Case_2_2(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, vector<int> & pedant_one);
     bool Case_2_3(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, Group &grp2, TreeNode * Rab);
     bool Case_2_4(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k, Group &grp2);
+    void Prepare(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2);
     bool MAF(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k);
     
 public:

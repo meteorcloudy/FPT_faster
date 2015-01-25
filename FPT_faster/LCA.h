@@ -42,23 +42,18 @@ public:
         dfs(tree->GetRootNode(0));
     }
     
-    int ask(int u,int v)
-    {
+    int ask(int u,int v){
         if(depth[u]<depth[v]) swap(u,v);
         
-        for(int st=1<<(Log-1),i=Log-1;i>=0;i--,st>>=1)
-        {
-            if(st<=depth[u]-depth[v])
-            {
+        for(int st=1<<(Log-1),i=Log-1;i>=0;i--,st>>=1){
+            if(st<=depth[u]-depth[v]){
                 u=dp[u][i];
             }
         }
         if(u==v) return u;
         
-        for(int i=Log-1;i>=0;i--)
-        {
-            if(dp[v][i]!=dp[u][i])
-            {
+        for(int i=Log-1;i>=0;i--){
+            if(dp[v][i]!=dp[u][i]){
                 v=dp[v][i];
                 u=dp[u][i];
             }
@@ -69,3 +64,25 @@ public:
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

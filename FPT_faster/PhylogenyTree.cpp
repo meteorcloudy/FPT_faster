@@ -31,8 +31,7 @@ TreeNode :: TreeNode(int x,int l) : id(x), parent(NULL), label(l), reflectId(-1)
 TreeNode :: TreeNode(int x,int l,int ref) : id(x), parent(NULL), label(l), reflectId(ref) {
 }
 
-TreeNode :: TreeNode(TreeNode * p){
-    TreeNode(p->id,p->label,p->reflectId);
+TreeNode :: TreeNode(TreeNode * p) : id(p->id), parent(NULL), label(p->label), reflectId(p->reflectId) {
     for (int i=0;i<p->children.size();i++)
         this->AddChild(new TreeNode(p->children[i]));
 }
@@ -75,8 +74,8 @@ void TreeNode :: removeChild(TreeNode *p) {
 
 string TreeNode :: ToString() {
 #if PRINT_DETAIL==1
-    if (label == -1) return "{ id = " + itoa(id) + " pid: " + itoa(parent?parent->id:-1) + " }";
-    return "{ id = " + itoa(id) + ", label = " + numToLabel[label] + " pid: " + itoa(parent?parent->id:-1) + " }";
+    if (label == -1) return "{ id = " + itoa(id) + " pid: " + itoa(parent?parent->id:-1) + " ref: " + itoa(reflectId) + " }";
+    return "{ id = " + itoa(id) + ", label = " + numToLabel[label] + " pid: " + itoa(parent?parent->id:-1) + " ref: " + itoa(reflectId) + " }";
 #else
     return numToLabel[label];
 #endif
@@ -163,10 +162,10 @@ string PhylogenyTree :: ToString() {
     if (roots.size()==1)
         return SubTreeToString(roots[0]);
     else if (roots.size()>1) {
-        result = "forest{\n";
+        result += "forest{\n";
         for (int i=0;i<roots.size();i++)
-            result = "\t" + SubTreeToString(roots[i]) + "\n";
-        result = "}";
+            result += "\t" + SubTreeToString(roots[i]) + "\n";
+        result += "}";
     }
     return result;
 }
@@ -238,8 +237,9 @@ void PhylogenyTree :: DeleteEdge(int nid) {
     
     TreeNode * p = idMap[nid];
     
-    FPT_ASSERT_INFO(p != NULL,("There is no node whose id = "+itoa(nid)).c_str());
-    FPT_ASSERT_INFO(p->parent != NULL,"There is no edge above p");
+//    FPT_ASSERT_INFO(p != NULL,("There is no node whose id = "+itoa(nid)).c_str());
+    //FPT_ASSERT_INFO(p->parent != NULL,"There is no edge above p");
+    if (p->parent == NULL) return;
     
     TreeNode * parent = p->parent;
     parent->removeChild(p);
@@ -270,7 +270,7 @@ void PhylogenyTree :: DeleteEdges(vector<int> &nids) {  //  TODO ç”¨DeleteEdgeä¼
     for (int i=(int)nids.size()-1;i>=0;i--) {
         TreeNode * p = idMap[nids[i]];
         
-        FPT_ASSERT_INFO(p != NULL,("_ There is no node whose id = "+itoa(nids[i])).c_str());
+//        FPT_ASSERT_INFO(p != NULL,("_ There is no node whose id = "+itoa(nids[i])).c_str());
         FPT_ASSERT_INFO(p->parent != NULL,"_ There is no edge above p");
         
         p->parent->removeChild(p);

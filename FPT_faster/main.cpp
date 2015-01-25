@@ -15,22 +15,25 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     
-    string newick1 = "((a,c),(b,d))";
+    string newick1 = "((a,b),(c,d))";
     string newick2 = "((a,b),(c,d))";
-    //    string newick1 = "(a,(b,(d,(e,(f,(g,h))))))";
-    //    string newick2 = "(b,(a,(g,(h,(d,(e,f))))))";
-    
+   
     cout << "please input two phylogeny trees in Newick format: " <<endl;
     cout << "example : " <<endl;
     cout << "\t" << newick1 <<endl;
     cout << "\t" << newick2 <<endl;
     
+//    freopen("/Users/meteorcloudy/Desktop/data/mytest.in", "r", stdin);
 //    cin >> newick1 >> newick2;
+    getline(cin,newick1);
+    getline(cin,newick2);
+    
     if (newick1[newick1.length()-1]==';')
         newick1 = newick1.substr(0,newick1.length()-1);
     if (newick2[newick2.length()-1]==';')
         newick2 = newick2.substr(0,newick2.length()-1);
     //    freopen("output.txt", "w", stdout);
+
     cout << newick1 <<endl;
     cout << newick2 <<endl;
     //    return 0;
@@ -41,7 +44,15 @@ int main(int argc, const char * argv[]) {
     
     PhylogenyTree * t2 = new PhylogenyTree();
     t2->BuildByNewick(newick2);
+
     
+    FPTSolver solver;
+    int dist = solver.MAF_Calc(t1, t2);
+    cout << "rSPR distance : " << dist <<endl;
+    
+    PhylogenyTree * forest = solver.GetResult();
+    cout << "MAF:" <<endl;
+    cout << forest->ToString() <<endl;
     
     return 0;
 }

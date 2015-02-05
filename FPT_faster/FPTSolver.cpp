@@ -495,14 +495,14 @@ void FPTSolver:: Prepare(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2
 
 bool FPTSolver:: MAF(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, int k){
     
-    if (k<0) return false;
+    if (k<0) { clearParam(F,T1,F2); return false;}
     
     Prepare(F, T1, F2);
     if (F2->GetRootNum() == 0) {
         ans = new PhylogenyTree(F); clearParam(F, T1, F2); return true;
     }
     
-    if (k==0) return false;
+    if (k==0) { clearParam(F,T1,F2); return false;}
     
     //核心算法
     Group grp1 = FindGroup(T1);
@@ -566,12 +566,6 @@ bool FPTSolver :: MAF_K(PhylogenyTree *t1, PhylogenyTree *t2, int k){  // 判断
     F = new PhylogenyTree();
     T1 = new PhylogenyTree(t1);
     F2 = new PhylogenyTree(t2);
-
-//    cout << t1->ToString() <<endl;
-//    cout << t2->ToString() <<endl;
-//
-//    cout << T1->ToString() <<endl;
-//    cout << F2->ToString() <<endl;
     
     return MAF(F, T1, F2, k);
 }
@@ -592,9 +586,6 @@ int FPTSolver:: MAF_Calc(PhylogenyTree * t1, PhylogenyTree * t2){
         leaf2[i]->SetReflectId(leaf1[i]->GetId());
     }
 
-//    cout << t1->ToString() <<endl;
-//    cout << t2->ToString() <<endl;
-    
     lca.Build(t2);
     
     int i = 0;

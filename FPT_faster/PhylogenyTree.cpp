@@ -269,10 +269,10 @@ void PhylogenyTree :: DeleteEdges(vector<int> &nids) {  //  TODO ç”¨DeleteEdgeä¼
     
     for (int i=(int)nids.size()-1;i>=0;i--) {
         TreeNode * p = idMap[nids[i]];
-        
+//        if (p) DeleteEdge(nids[i]);
 //        FPT_ASSERT_INFO(p != NULL,("_ There is no node whose id = "+itoa(nids[i])).c_str());
-        FPT_ASSERT_INFO(p->parent != NULL,"_ There is no edge above p");
-        
+//        FPT_ASSERT_INFO(p->parent != NULL,"_ There is no edge above p");
+
         p->parent->removeChild(p);
         p->parent = NULL;
         roots.push_back(p);
@@ -319,7 +319,56 @@ vector<TreeNode *> PhylogenyTree :: GetReflectedNode(){
     return res;
 }
 
+vector<string> PhylogenyTree:: SubTreeDraw(TreeNode *p,int &lx,int &rx){
+    vector<string> ans;
+    int lx1,rx1,lx2,rx2;
+    string self = "";
+    if (p->IsLeaf()){
+        self += "node [main node] ("+itoa(p->id)+") {$"+numToLabel[p->label]+"$}";
+        ans.push_back(self);
+        lx = rx = 0;
+    } else {
+        vector<string> tmp1 = SubTreeDraw(p->children[0],lx1,rx1);
+        vector<string> tmp2 = SubTreeDraw(p->children[1],lx2,rx2);
+        
+        int dist = 10+rx1+lx2;
+        
+        self +="[sibling distance = "+itoa(dist)+"mm] "+"node ("+itoa(p->id)+") {}";
+        ans.push_back(self);
+        
+        ans.push_back("\tchild{");
+        for (int i=0;i<tmp1.size();i++)
+            ans.push_back("\t\t"+tmp1[i]);
+        ans.push_back("\t}");
+        
+        ans.push_back("\tchild{");
+        for (int i=0;i<tmp2.size();i++)
+            ans.push_back("\t\t"+tmp2[i]);
+        ans.push_back("\t}");
+        
+        lx = lx1 + dist/2;
+        rx = rx2 + dist/2;
+    }
+    return ans;
+}
 
+int Deep(TreeNode * p){
+    if (p->IsLeaf()) return 0;
+    return max(Deep(p->GetChild(0)),Deep(p->GetChild(1)))+1;
+}
+
+string PhylogenyTree:: Draw(int i){
+    if (i>=roots.size()) return "";
+    int lx,rx;
+    vector<string> res =  SubTreeDraw(roots[i],lx,rx);
+    string ans = "";
+    for (int i=0;i<res.size();i++)
+        ans += res[i] + "\n";
+    ans += ";";
+    cout << "below=" << 10 * (Deep(roots[i])-1)+4 <<"mm"<<endl;
+    cout << "xshift=" << (rx-lx)/2  <<"mm" <<endl;
+    return ans;
+}
 
 
 

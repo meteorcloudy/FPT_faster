@@ -77,6 +77,7 @@ private:
     TreeNode * BuildSubtreeByNewick(const string & newickStr);
     string SubTreeToString(TreeNode * p);
     TreeNode * SubTreeContract(TreeNode * p);
+    vector<string> SubTreeDraw(TreeNode *p,int &lx,int &lr);
     void BuildMaps();
     
 public:
@@ -110,6 +111,7 @@ public:
     vector<TreeNode *> GetAllLabeledNode();
     vector<TreeNode *> GetReflectedNode();
     string ToString();
+    string Draw(int i);
 };
 
 

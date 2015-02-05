@@ -15,7 +15,7 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     
-    string newick1 = "((a,b),(c,d))";
+    string newick1 = "((a,c),(b,d))";
     string newick2 = "((a,b),(c,d))";
    
     cout << "please input two phylogeny trees in Newick format: " <<endl;
@@ -27,16 +27,15 @@ int main(int argc, const char * argv[]) {
 //    cin >> newick1 >> newick2;
     getline(cin,newick1);
     getline(cin,newick2);
-    
-    if (newick1[newick1.length()-1]==';')
-        newick1 = newick1.substr(0,newick1.length()-1);
-    if (newick2[newick2.length()-1]==';')
-        newick2 = newick2.substr(0,newick2.length()-1);
-    //    freopen("output.txt", "w", stdout);
 
-    cout << newick1 <<endl;
-    cout << newick2 <<endl;
-    //    return 0;
+//    newick1 = "((b,a),((c,5),4));";
+//    newick2 = "(3,((2,(5,4)),1));";
+    newick1 = newick1.substr(0,newick1.rfind(")")+1);
+    newick2 = newick2.substr(0,newick2.rfind(")")+1);
+
+//    cout << newick1 <<endl;
+//    cout << newick2 <<endl;
+
 
 
     PhylogenyTree * t1 = new PhylogenyTree();
@@ -45,6 +44,8 @@ int main(int argc, const char * argv[]) {
     PhylogenyTree * t2 = new PhylogenyTree();
     t2->BuildByNewick(newick2);
 
+//    cout << t1->Draw(0) <<endl;
+//    cout << t2->Draw(0) <<endl;
     
     FPTSolver solver;
     int dist = solver.MAF_Calc(t1, t2);
@@ -53,6 +54,9 @@ int main(int argc, const char * argv[]) {
     PhylogenyTree * forest = solver.GetResult();
     cout << "MAF:" <<endl;
     cout << forest->ToString() <<endl;
+    
+    delete t1;
+    delete t2;
     
     return 0;
 }

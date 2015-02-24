@@ -89,6 +89,8 @@ bool NodeComparer (TreeNode * a,TreeNode * b) {
 }
 
 PhylogenyTree :: PhylogenyTree() {
+    idMap.clear();
+    labelMap.clear();
 }
 
 PhylogenyTree :: PhylogenyTree(PhylogenyTree * tree) {
@@ -126,7 +128,7 @@ TreeNode * PhylogenyTree :: BuildSubtreeByNewick(const string &newickStr) {
     }
     
     if (pos == len) {
-        FPT_ASSERT_INFO(cnt==0, "Wrong Newick format !" );
+        FPT_ASSERT_INFO(cnt==0, "Wrong Newick format ! cnt=0 " );
         FPT_ASSERT_INFO(CheckLabelFormat(newickStr), ("Wrong label format: "+newickStr).c_str());
         unordered_map<string,int> :: iterator it = labelToNum.find(newickStr);
 
@@ -144,8 +146,8 @@ TreeNode * PhylogenyTree :: BuildSubtreeByNewick(const string &newickStr) {
             return t;
         }
     } else {
-        FPT_ASSERT_INFO(newickStr[0] == '(', "Wrong Newick format !" );
-        FPT_ASSERT_INFO(newickStr[len-1] == ')', "Wrong Newick format !" );
+        FPT_ASSERT_INFO(newickStr[0] == '(', ("Wrong Newick format ! ( str = !" + newickStr).c_str());
+        FPT_ASSERT_INFO(newickStr[len-1] == ')', ("Wrong Newick format ) str = !" + newickStr).c_str() );
         TreeNode * p = new TreeNode(nodeNum);
         idMap[nodeNum++] = p;
         TreeNode * child1 = BuildSubtreeByNewick(newickStr.substr(1,pos-1));
@@ -176,7 +178,7 @@ string PhylogenyTree :: SubTreeToString(TreeNode * p) {
     return p->ToString() + " => ( " + SubTreeToString(p->children[0]) + " , " + SubTreeToString(p->children[1]) + " )";
 #else
     if (p->IsLeaf()) return p->ToString();
-    return "( " + SubTreeToString(p->children[0]) + " , " + SubTreeToString(p->children[1]) + " )";
+    return "(" + SubTreeToString(p->children[0]) + "," + SubTreeToString(p->children[1]) + ")";
 #endif
     return "";
 }
@@ -300,6 +302,13 @@ void PhylogenyTree :: BuildMaps(){  // TODO , 优化，只bfs到siblingId!=-1的
     }
 }
 
+vector<TreeNode *> PhylogenyTree :: GetAllNode(){
+    vector<TreeNode *> res;
+    unordered_map<int,TreeNode *> :: iterator i;
+    for (i=idMap.begin();i!=idMap.end();i++)
+            res.push_back(i->second);
+    return res;
+}
 
 vector<TreeNode *> PhylogenyTree :: GetAllLabeledNode(){
     vector<TreeNode *> res;
@@ -365,10 +374,81 @@ string PhylogenyTree:: Draw(int i){
     for (int i=0;i<res.size();i++)
         ans += res[i] + "\n";
     ans += ";";
-    cout << "below=" << 10 * (Deep(roots[i])-1)+4 <<"mm"<<endl;
+    cout << "below=" << 10 * Deep(roots[i])+5 <<"mm"<<endl;
     cout << "xshift=" << (rx-lx)/2  <<"mm" <<endl;
     return ans;
 }
+
+
+void PhylogenyTree:: randomSPR(int times){
+
+    while (times--){
+
+        vector<TreeNode *> nodes = GetAllNode();
+        int n = (int)nodes.size();
+        if (n<=3) return;
+        TreeNode * p;
+        do {
+            p = nodes[(abs(rand()*rand()))%n];
+        } while (p->IsRoot());
+//        cout << p->id <<endl;
+        int fid = p->parent->id;
+        DeleteEdge(p->id);
+        RemoveRoot(roots[1]);
+        BuildMaps();
+        TreeNode * q;
+        nodes = GetAllNode();
+        n = (int)  nodes.size();
+        q = nodes[(abs(rand()*rand()))%n];
+//        cout << q->id <<endl;
+        TreeNode * fa = new TreeNode(fid);
+        
+        fa->children.push_back(p);
+        fa->children.push_back(q);
+        
+        if (q->parent!=NULL){
+            fa->parent = q->parent;
+            q->parent->removeChild(q);
+            q->parent->children.push_back(fa);
+        } else {
+            roots[0] = fa;
+        }
+        
+        p->parent = q->parent = fa;
+        
+        BuildMaps();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

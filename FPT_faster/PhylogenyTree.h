@@ -108,10 +108,13 @@ public:
         }
         EraseNode(p);
     }
+    vector<TreeNode *> GetAllNode();
     vector<TreeNode *> GetAllLabeledNode();
     vector<TreeNode *> GetReflectedNode();
     string ToString();
     string Draw(int i);
+    
+    void randomSPR(int k);
 };
 
 

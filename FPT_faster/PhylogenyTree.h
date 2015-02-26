@@ -24,22 +24,22 @@ private:
     vector<TreeNode *> children;
     int id;
     int label;
-    int reflectId;
+    int pairId;
     
 public:
     TreeNode();
     TreeNode(int id);
     TreeNode(int id,int label);
-    TreeNode(int id,int label,int reflectId);
+    TreeNode(int id,int label,int pairId);
     TreeNode(TreeNode *p);
     ~TreeNode();
     
     void AddChild(TreeNode *pChild);
     void SetId(int x) {id = x;}
     void SetLabel(const int str) {label = str;}
-    void SetReflectId(const int id) { reflectId = id;}
+    void SetPairId(const int id) { pairId = id;}
     bool IsLeaf() const { return children.size() == 0;}
-    bool IsRtLeaf() const { return reflectId != -1;}
+    bool IsRtLeaf() const { return pairId != -1;}
     bool Is2ndRtLeaf() const {
         if (children.size()!=2) return false;
         return children[0]->IsRtLeaf() && children[1]->IsRtLeaf();
@@ -58,10 +58,8 @@ public:
     }
     int GetId() { return id;}
     int GetLablel() { return label;}
-    int GetReflectId() { return reflectId;}
+    int GetPairId() { return pairId;}
     string ToString();
-    
-    TreeNode * Clone(); // 克隆以当前的为根的子树
 };
 
 
@@ -110,7 +108,7 @@ public:
     }
     vector<TreeNode *> GetAllNode();
     vector<TreeNode *> GetAllLabeledNode();
-    vector<TreeNode *> GetReflectedNode();
+    vector<TreeNode *> GetPairedNode();
     string ToString();
     string Draw(int i);
     

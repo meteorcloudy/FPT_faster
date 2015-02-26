@@ -19,19 +19,19 @@ int totNum = 0; // 总的label节点个数
 
 // implement TreeNode
 
-TreeNode :: TreeNode() : id(-1), parent(NULL), label(-1), reflectId(-1) {
+TreeNode :: TreeNode() : id(-1), parent(NULL), label(-1), pairId(-1) {
 }
 
-TreeNode :: TreeNode(int x) : id(x), parent(NULL), label(-1), reflectId(-1) {
+TreeNode :: TreeNode(int x) : id(x), parent(NULL), label(-1), pairId(-1) {
 }
 
-TreeNode :: TreeNode(int x,int l) : id(x), parent(NULL), label(l), reflectId(-1) {
+TreeNode :: TreeNode(int x,int l) : id(x), parent(NULL), label(l), pairId(-1) {
 }
 
-TreeNode :: TreeNode(int x,int l,int ref) : id(x), parent(NULL), label(l), reflectId(ref) {
+TreeNode :: TreeNode(int x,int l,int ref) : id(x), parent(NULL), label(l), pairId(ref) {
 }
 
-TreeNode :: TreeNode(TreeNode * p) : id(p->id), parent(NULL), label(p->label), reflectId(p->reflectId) {
+TreeNode :: TreeNode(TreeNode * p) : id(p->id), parent(NULL), label(p->label), pairId(p->pairId) {
     for (int i=0;i<p->children.size();i++)
         this->AddChild(new TreeNode(p->children[i]));
 }
@@ -74,8 +74,8 @@ void TreeNode :: removeChild(TreeNode *p) {
 
 string TreeNode :: ToString() {
 #if PRINT_DETAIL==1
-    if (label == -1) return "{ id = " + itoa(id) + " pid: " + itoa(parent?parent->id:-1) + " ref: " + itoa(reflectId) + " }";
-    return "{ id = " + itoa(id) + ", label = " + numToLabel[label] + " pid: " + itoa(parent?parent->id:-1) + " ref: " + itoa(reflectId) + " }";
+    if (label == -1) return "{ id = " + itoa(id) + " pid: " + itoa(parent?parent->id:-1) + " ref: " + itoa(pairId) + " }";
+    return "{ id = " + itoa(id) + ", label = " + numToLabel[label] + " pid: " + itoa(parent?parent->id:-1) + " ref: " + itoa(pairId) + " }";
 #else
     return numToLabel[label];
 #endif
@@ -254,7 +254,7 @@ void PhylogenyTree :: DeleteEdge(int nid) {
     idMap.erase(parent->id);
     parent->id = child->id;
     parent->label = child->label;
-    parent->reflectId = child->reflectId;
+    parent->pairId = child->pairId;
     parent->children = child->children;
     idMap[parent->id] = parent;
     if (parent->label!=-1) labelMap[parent->label] = parent;
@@ -296,7 +296,7 @@ void PhylogenyTree :: BuildMaps(){  // TODO , 优化，只bfs到siblingId!=-1的
         p = q.front(); q.pop();
         idMap[p->id] = p;
         if (p->label != -1) labelMap[p->label]=p;
-        if (p->reflectId != -1) continue;   // 只bfs到siblingId!=-1的点
+        if (p->pairId != -1) continue;   // 只bfs到siblingId!=-1的点
         for (int i=(int) p->children.size()-1;i>=0;i--)    	
             q.push(p->children[i]);
     }
@@ -319,11 +319,11 @@ vector<TreeNode *> PhylogenyTree :: GetAllLabeledNode(){
     return res;
 }
 
-vector<TreeNode *> PhylogenyTree :: GetReflectedNode(){
+vector<TreeNode *> PhylogenyTree :: GetPairedNode(){
     vector<TreeNode *> res;
     unordered_map<int,TreeNode *> :: iterator i;
     for (i=idMap.begin();i!=idMap.end();i++)
-        if (i->second->reflectId != -1)
+        if (i->second->pairId != -1)
             res.push_back(i->second);
     return res;
 }

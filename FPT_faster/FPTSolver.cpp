@@ -26,17 +26,17 @@ void FPTSolver:: FindPendantNodes(TreeNode * p, TreeNode * r,vector<int> &nids){
 }
 
 bool FPTSolver:: MergePair(PhylogenyTree *T1, PhylogenyTree *F2,TreeNode * n1, TreeNode * n2){
-    TreeNode * p1 = F2->GetNodeById(n1->GetReflectId());
-    TreeNode * p2 = F2->GetNodeById(n2->GetReflectId());
+    TreeNode * p1 = F2->GetNodeById(n1->GetPairId());
+    TreeNode * p2 = F2->GetNodeById(n2->GetPairId());
     if (p1->IsSibling(p2)) {
         TreeNode * f1 = n1->GetParent();
         TreeNode * f2 = p1->GetParent();
-        f1->SetReflectId(f2->GetId());
-        f2->SetReflectId(f1->GetId());
-        n1->SetReflectId(-1);
-        n2->SetReflectId(-1);
-        p1->SetReflectId(-1);
-        p2->SetReflectId(-1);
+        f1->SetPairId(f2->GetId());
+        f2->SetPairId(f1->GetId());
+        n1->SetPairId(-1);
+        n2->SetPairId(-1);
+        p1->SetPairId(-1);
+        p2->SetPairId(-1);
         T1->EraseNode(n1); T1->EraseNode(n2);
         F2->EraseNode(p1); F2->EraseNode(p2);
         return true;
@@ -45,11 +45,11 @@ bool FPTSolver:: MergePair(PhylogenyTree *T1, PhylogenyTree *F2,TreeNode * n1, T
 }
 
 bool FPTSolver:: MergeSiblingNodes(PhylogenyTree *T1, PhylogenyTree *F2){
-    vector<TreeNode *> rt = T1->GetReflectedNode();
+    vector<TreeNode *> rt = T1->GetPairedNode();
     int i = 0;
     bool isMerged = false;
     while (i<rt.size()){
-        if (rt[i]->GetReflectId() == -1) { i++; continue;}
+        if (rt[i]->GetPairId() == -1) { i++; continue;}
         TreeNode * sib = rt[i]->GetSiblingNode();
         if (sib != NULL){
             if (MergePair(T1,F2,rt[i],sib)) {
@@ -110,8 +110,8 @@ bool FPTSolver:: MoveTree(PhylogenyTree *F, PhylogenyTree * T1, PhylogenyTree *F
     int pos = 0;
     while (pos<F2->GetRootNum()){
         TreeNode * root = F2->GetRootNode(pos);
-        if (root->GetReflectId() != -1){
-            TreeNode * p = T1->GetNodeById(root->GetReflectId());
+        if (root->GetPairId() != -1){
+            TreeNode * p = T1->GetNodeById(root->GetPairId());
             T1->DeleteEdge(p->GetId());
             T1->RemoveRoot(p);
             delete p;
@@ -508,10 +508,10 @@ bool FPTSolver:: MAF(PhylogenyTree * F,PhylogenyTree * T1,PhylogenyTree * F2, in
     Group grp1 = FindGroup(T1);
     Group grp2;
     grp2.type = grp1.type;
-    grp2.a = F2->GetNodeById(grp1.a->GetReflectId());
-    grp2.b = F2->GetNodeById(grp1.b->GetReflectId());
-    grp2.c = F2->GetNodeById(grp1.c->GetReflectId());
-    if (grp1.type == 4) grp2.d = F2->GetNodeById(grp1.d->GetReflectId());
+    grp2.a = F2->GetNodeById(grp1.a->GetPairId());
+    grp2.b = F2->GetNodeById(grp1.b->GetPairId());
+    grp2.c = F2->GetNodeById(grp1.c->GetPairId());
+    if (grp1.type == 4) grp2.d = F2->GetNodeById(grp1.d->GetPairId());
     
     bool res = false;
     
@@ -582,8 +582,8 @@ int FPTSolver:: MAF_Calc(PhylogenyTree * t1, PhylogenyTree * t2){
     vector<TreeNode *> leaf2 = t2->GetAllLabeledNode();
     
     for (int i=0;i<leaf1.size();i++) {
-        leaf1[i]->SetReflectId(leaf2[i]->GetId());
-        leaf2[i]->SetReflectId(leaf1[i]->GetId());
+        leaf1[i]->SetPairId(leaf2[i]->GetId());
+        leaf2[i]->SetPairId(leaf1[i]->GetId());
     }
 
     lca.Build(t2);
